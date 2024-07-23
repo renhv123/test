@@ -1,3 +1,4 @@
+// index.js
 const API_KEY = 'VEWSZ1LN7ZW1AQUQ';
 let StockSymbol = 'AMZN';
 
