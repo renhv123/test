@@ -1,4 +1,3 @@
-<!-- stock.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,5 +13,28 @@
         <h1>Stock Market Historical Data Visualization App</h1>
     </center>
     <div id="chart"></div>
+    <form method="POST" action="/">
+        <label for="company">Enter Company Name:</label>
+        <input type="text" id="company" name="company" required autocomplete="off" list="companyList">
+        <datalist id="companyList">
+            <option value="TSLA">
+            <option value="INFY">
+            <option value="IBM">
+        </datalist>
+        <button type="submit">Plot</button>
+    </form>
+    <script>
+        // Get the input element and the datalist
+        var input = document.getElementById("company");
+        var datalist = document.getElementById("companyList");
+        // Define the list of company names
+        var companies = ["TSLA", "INFY", "IBM"];
+        // Create options for the datalist based on the company names
+        companies.forEach(function(company) {
+            var option = document.createElement("option");
+            option.value = company;
+            datalist.appendChild(option);
+        });
+    </script>
 </body>
 </html>
