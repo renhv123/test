@@ -1,0 +1,16 @@
+DELIMITER $$
+
+CREATE PROCEDURE backup_database()
+BEGIN
+    DECLARE backup_path VARCHAR(255);
+    SET backup_path = CONCAT('C:/MySQLBackups/', DATE_FORMAT(NOW(),'%Y%m%d%H%i%s'), '_backup.sql');
+    
+    SET @backup_query = CONCAT('mysqldump -u your_username -pyour_password your_database > ', backup_path);
+    SET @sys_command = CONCAT('system ', @backup_query);
+
+    PREPARE stmt FROM @sys_command;
+    EXECUTE stmt;
+    DEALLOCATE PREPARE stmt;
+END$$
+
+DELIMITER ;
