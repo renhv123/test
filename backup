@@ -1,16 +1,36 @@
+CREATE TABLE backup_log (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    backup_command VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
 DELIMITER $$
 
-CREATE PROCEDURE backup_database()
+CREATE PROCEDURE db_backup()
 BEGIN
     DECLARE backup_path VARCHAR(255);
-    SET backup_path = CONCAT('C:/MySQLBackups/', DATE_FORMAT(NOW(),'%Y%m%d%H%i%s'), '_backup.sql');
-    
-    SET @backup_query = CONCAT('mysqldump -u your_username -pyour_password your_database > ', backup_path);
-    SET @sys_command = CONCAT('system ', @backup_query);
+    SET backup_path = CONCAT('C:/MySQLBackups/', DATE_FORMAT(NOW(), '%Y%m%d%H%i%s'), '_backup.sql');
 
-    PREPARE stmt FROM @sys_command;
-    EXECUTE stmt;
-    DEALLOCATE PREPARE stmt;
+    INSERT INTO backup_log (backup_command)
+    VALUES (CONCAT('mysqldump -u your_username -pyour_password user_registration > ', backup_path));
 END$$
 
 DELIMITER ;
+
+@echo off
+setlocal
+
+rem MySQL credentials
+set MYSQL_USER=your_username
+set MYSQL_PASS=your_password
+set MYSQL_DB=user_registration
+set BACKUP_DIR=C:\MySQLBackups
+
+rem Get the latest backup command from the database
+for /f "usebackq tokens=*" %%a in (`mysql -u %MYSQL_USER% -p%MYSQL_PASS% -e "SELECT backup_command FROM backup_log ORDER BY created_at DESC LIMIT 1;" -s -N %MYSQL_DB%`) do set BACKUP_COMMAND=%%a
+
+rem Execute the backup command
+%BACKUP_COMMAND%
+
+endlocal
